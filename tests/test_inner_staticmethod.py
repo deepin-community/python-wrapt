@@ -1,12 +1,11 @@
 from __future__ import print_function
 
 import unittest
-import inspect
-import imp
+import types
 
 import wrapt
 
-from compat import PY2, PY3, exec_
+from compat import exec_, getfullargspec
 
 DECORATORS_CODE = """
 import wrapt
@@ -16,7 +15,7 @@ def passthru_decorator(wrapped, instance, args, kwargs):
     return wrapped(*args, **kwargs)
 """
 
-decorators = imp.new_module('decorators')
+decorators = types.ModuleType('decorators')
 exec_(DECORATORS_CODE, decorators.__dict__, decorators.__dict__)
 
 class Class(object):
@@ -95,15 +94,15 @@ class TestNamingInnerStaticMethod(unittest.TestCase):
     def test_class_argspec(self):
         # Test preservation of instance method argument specification.
 
-        original_argspec = inspect.getargspec(Original.function)
-        function_argspec = inspect.getargspec(Class.function)
+        original_argspec = getfullargspec(Original.function)
+        function_argspec = getfullargspec(Class.function)
         self.assertEqual(original_argspec, function_argspec)
 
     def test_instance_argspec(self):
         # Test preservation of instance method argument specification.
 
-        original_argspec = inspect.getargspec(Original().function)
-        function_argspec = inspect.getargspec(Class().function)
+        original_argspec = getfullargspec(Original().function)
+        function_argspec = getfullargspec(Class().function)
         self.assertEqual(original_argspec, function_argspec)
 
     def test_class_isinstance(self):
