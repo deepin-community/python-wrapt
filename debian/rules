@@ -9,9 +9,10 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+bindnow
 	dh $@ --buildsystem=python_distutils --with python3,sphinxdoc
 
 override_dh_auto_clean:
-	rm -rf build
+	rm -rf build *.egg-info src/*.egg-info
 	find . -iname '*.pyc' -delete
 	for i in $$(find . -type d -iname __pycache__) ; do rm -rf $$i ; done
+	rm -rf .pytest_cache
 
 override_dh_auto_build:
 	echo "Do nothing..."
